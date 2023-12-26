@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import styles from './App.module.css';
+import FormRegistr from './component/FormRegistr';
 
 const initialValue = {
 	email: '',
@@ -7,7 +7,7 @@ const initialValue = {
 	confirmPassword: '',
 };
 
-const useStore = () => {
+export const useStore = () => {
 	const [formDataValues, setFormDataValues] = useState(initialValue);
 
 	return {
@@ -23,11 +23,13 @@ export const App = () => {
 	const btnRef = useRef(null);
 	const passwordRef = useRef('');
 	const confirmPasswordRef = useRef('');
+
 	const [errorMessage, setErrorMessage] = useState(null);
+
 	const { getValues, setValues, resetValues } = useStore();
 	const { email, password, confirmPassword } = getValues();
 
-	const submitValue = ({ target }) => {
+	const changeValue = ({ target }) => {
 		if (!/^[\w_@.]*$/.test(target.value)) {
 			setErrorMessage(
 				'Вы можете использовать только буквы, цыфры, нижнее подчеркивание и знак @',
@@ -46,6 +48,7 @@ export const App = () => {
 			btnRef.current.focus();
 		}
 	};
+
 	const onBlur = ({ target }) => {
 		if (target.value.length < 3) {
 			setErrorMessage('значение поля не может быть менее 3 симовлов');
@@ -62,70 +65,18 @@ export const App = () => {
 	};
 
 	return (
-		<div className={styles.App}>
-			<form onSubmit={sendForm} className={styles.formRegister}>
-				<div>
-					<h2>Форма регистрации</h2>
-				</div>
-				{errorMessage && (
-					<div className={styles.errorMessage}>{errorMessage} </div>
-				)}
-				<div className={styles.fieldsForm}>
-					<label htmlFor="email">Введите ваш Email:</label>
-					<input
-						value={email}
-						type="email"
-						name="email"
-						id="email"
-						placeholder="123@mail.ru"
-						onChange={submitValue}
-						onBlur={onBlur}
-					/>
-				</div>
-				<div className={styles.fieldsForm}>
-					<label htmlFor="password">Введите ваш пароль:</label>
-					<input
-						value={password}
-						ref={passwordRef}
-						type="password"
-						name="password"
-						id="password"
-						placeholder="пароль"
-						onChange={submitValue}
-						onBlur={onBlur}
-					/>
-				</div>
-				<div className={styles.fieldsForm}>
-					<label htmlFor="confirmPassword">Введите пароль еще раз:</label>
-					<input
-						value={confirmPassword}
-						ref={confirmPasswordRef}
-						type="password"
-						name="confirmPassword"
-						id="confirmPassword"
-						placeholder="введите пароль еще раз"
-						onChange={submitValue}
-						onBlur={onBlur}
-					/>
-				</div>
-				<div className={styles.fieldsForm}>
-					<button
-						type="submit"
-						ref={btnRef}
-						disabled={
-							!!errorMessage ||
-							email === '' ||
-							password === '' ||
-							confirmPassword === ''
-						}
-					>
-						Отправить
-					</button>
-					<button type="button" onClick={resetValues}>
-						Сброс
-					</button>
-				</div>
-			</form>
-		</div>
+		<FormRegistr
+			sendForm={sendForm}
+			onBlur={onBlur}
+			changeValue={changeValue}
+			resetValues={resetValues}
+			errorMessage={errorMessage}
+			email={email}
+			password={password}
+			confirmPassword={confirmPassword}
+			passwordRef={passwordRef}
+			confirmPasswordRef={confirmPasswordRef}
+			btnRef={btnRef}
+		/>
 	);
 };
